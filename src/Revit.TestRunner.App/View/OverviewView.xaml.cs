@@ -11,5 +11,10 @@ namespace Revit.TestRunner.App.View
         {
             InitializeComponent();
         }
+
+        private void TreeView_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+
+        }
     }
 }

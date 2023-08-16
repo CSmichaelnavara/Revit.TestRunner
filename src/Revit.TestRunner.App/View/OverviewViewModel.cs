@@ -104,6 +104,20 @@ namespace Revit.TestRunner.App.View
         }
 
         /// <summary>
+        /// Gets or sets the option to load latest build copy instead of exact build of <see cref="AssemblyPath"/>
+        /// </summary>
+        public bool UseLatestBuilds
+        {
+            get => mUseLatestBuilds;
+            set
+            {
+                mUseLatestBuilds = value;
+                Properties.Settings.Default.UseLatestBuilds = value;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        /// <summary>
         /// Get the Model Tree of the the assembly.
         /// </summary>
         public TreeViewModel Tree { get; }
@@ -201,13 +215,18 @@ namespace Revit.TestRunner.App.View
         /// </summary>
         public ICommand RefreshCommand => new DelegateWpfCommand(() =>
         {
+            var caseViewModels = GetSelectedCases().Select(x => x.Text).ToList();
+
             if (!string.IsNullOrEmpty(AssemblyPath))
             {
                 var path = AssemblyPath;
                 AssemblyPath = string.Empty;
                 AssemblyPath = path;
+                var treeHasObjects = Tree.HasObjects;
+
             }
         });
+
 
         /// <summary>
         /// Run the selected tests.
@@ -251,7 +270,7 @@ namespace Revit.TestRunner.App.View
             ProgramState = message.Replace("\n\n", "\n").Replace("\n", " - ");
             MessageBox.Show(message, "Test run", MessageBoxButton.OK, success ? MessageBoxImage.Information : MessageBoxImage.Error);
 
-            Tree.ObjectTree.ToList().ForEach(n => n.IsChecked = false);
+            //Tree.ObjectTree.ToList().ForEach(n => n.IsChecked = false);
         }, () => Tree.HasObjects);
 
         /// <summary>
@@ -304,19 +323,34 @@ namespace Revit.TestRunner.App.View
             Process.Start(startInfo);
         });
 
-        /// <summary>
-        /// Gets or sets the option to load latest build copy instead of exact build of <see cref="AssemblyPath"/>
-        /// </summary>
-        public bool UseLatestBuilds
+        public ICommand ReRunCommand => new AsyncCommand(async () =>
         {
-            get => mUseLatestBuilds;
-            set
+            //Get selected tests
+            var caseViewModels = GetSelectedCases().Select(x => x.Text).ToList();
+
+            //Execute RefreshCommand
+            if (RefreshCommand.CanExecute(null))
+                RefreshCommand.Execute(null);
+
+            //TODO: Wait to refresh Tree content instead of simple waiting for 1 sec.
+            await Task.Delay(1000);
+
+            //Set isChecked to previously selected tests
+            var nodeViewModels = Tree.ObjectTree.ToList();
+            foreach (var nodeViewModel in nodeViewModels)
             {
-                mUseLatestBuilds = value;
-                Properties.Settings.Default.UseLatestBuilds = value;
-                Properties.Settings.Default.Save();
+                var text = nodeViewModel.Text;
+                var isChecked = caseViewModels.Contains(text);
+                if (isChecked)
+                    nodeViewModel.IsChecked = isChecked;
             }
-        }
+
+            //Execute RunCommand when possible
+            var runCommand = RunCommand as AsyncCommand;
+            var canExecute = runCommand?.CanExecute() ?? false;
+            if (canExecute)
+                await runCommand.ExecuteAsync();
+        });
 
         #endregion
 
