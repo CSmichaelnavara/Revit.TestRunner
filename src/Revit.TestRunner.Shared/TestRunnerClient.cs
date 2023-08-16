@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -30,6 +31,65 @@ namespace Revit.TestRunner.Shared
         #endregion
 
         #region Methods
+
+        public async Task<ExploreResponseDto> ExploreLatestAssemblyAsync(string assemblyPath, string revitVersion,
+            string revitLanguage, CancellationToken cancellationToken)
+        {
+            var fileInfo = new FileInfo(assemblyPath);
+            if (!fileInfo.Exists)
+                throw new FileNotFoundException("Assembly DLL file not found", assemblyPath);
+            var versionInfo = FileVersionInfo.GetVersionInfo(assemblyPath);
+            string buildDir = fileInfo.DirectoryName;
+            var versionDir = Path.Combine(buildDir + "Versions", versionInfo.FileVersion);
+            var versionAssemblyPath = Path.Combine(versionDir, fileInfo.Name);
+            if (!File.Exists(versionAssemblyPath))
+            {
+                Directory.CreateDirectory(versionDir);
+                CopyFilesRecursively(buildDir, versionDir);
+            }
+
+            return await ExploreAssemblyAsync(versionAssemblyPath, revitVersion, revitLanguage, cancellationToken);
+
+            /*Private Function SearchLastBuild(buildDir As String, dllFileName As String) As String
+    buildDir = buildDir.TrimEnd("\")
+    Dim dllFullFileName = System.IO.Path.Combine(buildDir, dllFileName)
+    If Not File.Exists(dllFullFileName) Then Throw New FileNotFoundException("Dll file not found", dllFullFileName)
+
+    Dim versionInfo = FileVersionInfo.GetVersionInfo(dllFullFileName)
+
+    Dim versionDir = System.IO.Path.Combine(buildDir & "Versions", versionInfo.FileVersion)
+    Dim versionDllFullFileName = System.IO.Path.Combine(versionDir, dllFileName)
+    If File.Exists(versionDllFullFileName) Then Return versionDllFullFileName
+    Directory.CreateDirectory(versionDir)
+    CopyFilesRecursively(buildDir, versionDir)
+    Return versionDllFullFileName
+
+End Function*/
+        }
+
+        private void CopyFilesRecursively(string sourcePath, string targetPath)
+        {
+            foreach (var dirPath in Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories))
+            {
+                Directory.CreateDirectory(dirPath.Replace(sourcePath, targetPath));
+            }
+
+            foreach (var sourceFileName in Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories))
+            {
+                File.Copy(sourceFileName, sourceFileName.Replace(sourcePath, targetPath), true);
+            }
+            /*Private Sub CopyFilesRecursively(sourcePath As String, targetPath As String)
+    'Now Create all of the directories
+    For Each dirPath As String In Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories)
+        Directory.CreateDirectory(dirPath.Replace(sourcePath, targetPath))
+    Next
+    'Copy all the files & Replaces any files with the same name
+    For Each newPath As String In Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories)
+        File.Copy(newPath, newPath.Replace(sourcePath, targetPath), True)
+    Next
+End Sub
+*/
+        }
 
         /// <summary>
         /// Start a explore request.

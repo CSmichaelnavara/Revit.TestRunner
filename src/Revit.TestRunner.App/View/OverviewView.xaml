@@ -35,6 +35,10 @@
                     <TextBlock Text="Open Log" />
                 </Hyperlink>
             </TextBlock>
+            <CheckBox DockPanel.Dock="Right"
+                      Content="Use latest builds"
+                      IsChecked="{Binding UseLatestBuilds}"
+                      Width="auto" HorizontalAlignment="Right"/>
         </DockPanel>
 
 
