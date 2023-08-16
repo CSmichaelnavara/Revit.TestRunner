@@ -56,38 +56,48 @@
 
 
         <DockPanel DockPanel.Dock="Bottom" >
-            <StackPanel>
-                <TextBlock Text="{Binding ProgramState}"/>
-            </StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="300"/>
+                </Grid.ColumnDefinitions>
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <TextBlock FontSize="12"  HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10,0,10,0">
+                <StackPanel Grid.Column="0">
+                    <TextBlock 
+                        Text="{Binding ProgramState}" 
+                        TextTrimming="WordEllipsis" 
+                        ToolTip="{Binding ProgramState}"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock FontSize="12"  HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10,0,10,0">
                     <Hyperlink Command="{Binding LoadResultCommand}">
                         <TextBlock Text="Load result" />
                     </Hyperlink>
                 </TextBlock>
-                <Button  Content="Re-Run" Width="50" Command="{Binding ReRunCommand}" ToolTip="Run Selected"/>
-                <Button  Content="Run" Width="50" Command="{Binding RunCommand}" ToolTip="Run Selected"/>
-                <Button  Content="Create request" Width="100" Command="{Binding CreateRequestCommand}" ToolTip="Run Selected" Margin="20,0,0,0"/>
-            </StackPanel>
+                    <Button  Content="Re-Run" Width="50" Command="{Binding ReRunCommand}" ToolTip="Run Selected"/>
+                    <Button  Content="Run" Width="50" Command="{Binding RunCommand}" ToolTip="Run Selected"/>
+                    <Button  Content="Create request" Width="100" Command="{Binding CreateRequestCommand}" ToolTip="Run Selected" Margin="20,0,0,0"/>
+                </StackPanel>
+            </Grid>
         </DockPanel>
 
 
         <DockPanel Margin="0,5,0,0">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="2*" MinHeight="150" />
-                <RowDefinition Height="5" />
-                <RowDefinition Height="1*" MinHeight="50" />
-            </Grid.RowDefinitions>
-            <testTreeView:TreeView DataContext="{Binding Tree}" Loaded="TreeView_Loaded" />
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2*" MinHeight="150" />
+                    <RowDefinition Height="5" />
+                    <RowDefinition Height="1*" MinHeight="50" />
+                </Grid.RowDefinitions>
+                <testTreeView:TreeView DataContext="{Binding Tree}" Loaded="TreeView_Loaded" />
 
-            <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch"/>
+                <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch"/>
 
-            <DockPanel Grid.Row="2" Visibility="{Binding IsNodeSelected, Converter={StaticResource BoolToVisConverter}}" >
-                <testTreeView:DetailView DataContext="{Binding Tree.SelectedNode}" Margin="2"/>
-            </DockPanel>
-        </Grid>
+                <DockPanel Grid.Row="2" Visibility="{Binding IsNodeSelected, Converter={StaticResource BoolToVisConverter}}" >
+                    <testTreeView:DetailView DataContext="{Binding Tree.SelectedNode}" Margin="2"/>
+                </DockPanel>
+            </Grid>
         </DockPanel>
     </DockPanel>
 </UserControl>

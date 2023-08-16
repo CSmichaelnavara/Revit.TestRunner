@@ -350,7 +350,7 @@ namespace Revit.TestRunner.App.View
             var canExecute = runCommand?.CanExecute() ?? false;
             if (canExecute)
                 await runCommand.ExecuteAsync();
-        });
+        }, () => Tree.HasObjects && UseLatestBuilds);
 
         #endregion
 
