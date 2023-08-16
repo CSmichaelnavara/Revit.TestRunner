@@ -1,4 +1,10 @@
 # Release Notes
+
+### non-Oficial v1.4
+    * Runtime changed from .NET Core 3.1 to .NET 7.0
+    * Support for re-build and test
+    * Small UI improvements
+
 ### v1.4 [April 2023]
     * Support of Revit 2024
     * Filter function in UI

@@ -82,6 +82,16 @@ public void MultiParameterTest1( UIApplication uiApplication, Application applic
 
 In your test, you have access to it, and your able to make stuff with it (ex. `UIApplication.Application.OpenDocumentFile(…)`)
 
+## Rebuild and run tests again
+If You want to modify and rebuild your project and run test again, you can use this modified version.
+- You need to check the 'Use latest bulds' checkbox (1)
+- Select tests you want to run
+- Press 'ReRun' button (2)
+
+Now the test runner loads the copy of latest build and run selected tests. Tests are not un-checked after end of test session. 
+You can repeat 'ReRun' until all tests pass.
+![alt text](/images/testrunner_ui_rebuild_and_test.png)
+
 ## Release History
 See [ReleaseNotes](/documentation/ReleaseNotes.md)
 
