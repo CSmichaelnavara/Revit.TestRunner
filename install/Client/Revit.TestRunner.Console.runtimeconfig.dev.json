@@ -1,8 +1,8 @@
 {
   "runtimeOptions": {
     "additionalProbingPaths": [
-      "C:\\Users\\floto\\.dotnet\\store\\|arch|\\|tfm|",
-      "C:\\Users\\floto\\.nuget\\packages"
+      "C:\\Users\\michael.navara\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\michael.navara\\.nuget\\packages"
     ]
   }
 }
